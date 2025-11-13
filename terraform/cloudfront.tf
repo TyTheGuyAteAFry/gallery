@@ -134,7 +134,8 @@ resource "aws_cloudfront_cache_policy" "disabled_api_cache" {
     }
 
     headers_config {
-      header_behavior = "all"
+      header_behavior = "whitelist"
+      headers = ["Authorization"]  # example
     }
 
     query_strings_config {
