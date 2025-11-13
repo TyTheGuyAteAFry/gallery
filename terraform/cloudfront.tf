@@ -71,8 +71,8 @@ resource "aws_cloudfront_distribution" "cdn" {
     allowed_methods        = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods         = ["GET", "HEAD"]
 
-    cache_policy_id          = aws_cloudfront_cache_policy.api_cache.id
-    origin_request_policy_id = aws_cloudfront_origin_request_policy.api_origin.id
+    cache_policy_id          = "413f1601-97f7-42f1-8e8b-0f6cd0d42838"
+    origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
   }
 
   price_class = "PriceClass_100"
@@ -112,51 +112,4 @@ resource "aws_cloudfront_distribution" "cdn" {
     error_caching_min_ttl = 0
   }
 
-}
-
-resource "aws_cloudfront_cache_policy" "api_cache" {
-  name = "api-no-cache"
-
-  default_ttl = 0
-  max_ttl     = 0
-  min_ttl     = 0
-
-  parameters_in_cache_key_and_forwarded_to_origin {
-
-    cookies_config {
-      cookie_behavior = "none"
-    }
-
-    headers_config {
-      header_behavior = "whitelist"
-
-      headers {
-        items = ["Authorization"]
-      }
-    }
-
-    query_strings_config {
-      query_string_behavior = "all"
-    }
-  }
-}
-
-resource "aws_cloudfront_origin_request_policy" "api_origin" {
-  name = "api-forward-auth"
-
-  cookies_config {
-    cookie_behavior = "none"
-  }
-
-  headers_config {
-    header_behavior = "whitelist"
-
-    headers {
-      items = ["Authorization"]
-    }
-  }
-
-  query_strings_config {
-    query_string_behavior = "all"
-  }
 }
