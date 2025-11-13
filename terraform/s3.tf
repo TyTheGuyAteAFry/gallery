@@ -81,3 +81,6 @@ resource "aws_s3_bucket_logging" "site_bucket_logging" {
   target_prefix = "cloudfront/"
 }
 
+resource "aws_s3_bucket" "state_bucket" {
+  bucket = "terraform-state-bucket-gallery-app"
+}

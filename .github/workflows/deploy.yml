@@ -55,7 +55,7 @@ jobs:
 
       - name: Terraform Init
         working-directory: terraform
-        run: terraform init -input=false
+        run: terraform init -input=false -reconfigure
 
       - name: Terraform Apply (update Lambda)
         working-directory: terraform
