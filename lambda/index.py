@@ -13,7 +13,7 @@ TABLE_NAME = os.environ["PHOTOS_TABLE"]
 
 table = dynamodb.Table(TABLE_NAME)
 
-def lambda_handler(event, context):
+def handler(event, context):
     method = event.get("httpMethod")
     path = event.get("rawPath") or event.get("path")  # API Gateway v2 vs v1
 
