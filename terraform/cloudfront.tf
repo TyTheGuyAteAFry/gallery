@@ -123,7 +123,7 @@ resource "aws_cloudfront_cache_policy" "disabled_api_cache" {
 
   min_ttl     = 0
   default_ttl = 0
-  max_ttl     = 0
+  max_ttl     = 1
 
   parameters_in_cache_key_and_forwarded_to_origin {
     enable_accept_encoding_gzip   = false
