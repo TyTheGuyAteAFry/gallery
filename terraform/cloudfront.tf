@@ -118,13 +118,17 @@ resource "aws_cloudfront_cache_policy" "api_cache" {
   min_ttl     = 0
 
   parameters_in_cache_key_and_forwarded_to_origin {
+
     cookies_config {
       cookie_behavior = "none"
     }
 
     headers_config {
       header_behavior = "whitelist"
-      headers         = ["Authorization"]
+
+      headers {
+        items = ["Authorization"]
+      }
     }
 
     query_strings_config {
@@ -142,7 +146,10 @@ resource "aws_cloudfront_origin_request_policy" "api_origin" {
 
   headers_config {
     header_behavior = "whitelist"
-    headers         = ["Authorization"]
+
+    headers {
+      items = ["Authorization"]
+    }
   }
 
   query_strings_config {
