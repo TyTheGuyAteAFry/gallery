@@ -80,10 +80,6 @@ jobs:
           echo "VITE_API_URL=${{ env.API_URL }}" > .env
           echo "Injected API Gateway URL: ${{ env.API_URL }}"
 
-      - name: Build
-        run: npm run build
-
-
       - name: Build frontend
         run: npm run build
 
