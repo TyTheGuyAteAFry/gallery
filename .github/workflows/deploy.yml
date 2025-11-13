@@ -30,11 +30,23 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-       # --- Deploy Lambda ---
-      - name: Zip Lambda code
-         run: |
+      - name: Setup Python (for Lambda packaging)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Lambda dependencies
+        working-directory: lambda
+        run: |
+          if [ -f "requirements.txt" ]; then
+            pip install -r requirements.txt -t .
+          fi
+
+      - name: Package Lambda function
+        run: |
           mkdir -p terraform/lambda
-          zip -r terraform/lambda/backend.zip lambda/
+          cd lambda
+          zip -r ../terraform/lambda/backend.zip .
 
       - name: Terraform Init
         working-directory: terraform
