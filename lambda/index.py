@@ -15,14 +15,13 @@ table = dynamodb.Table(TABLE_NAME)
 
 def handler(event, context):
     method = event.get("httpMethod")
-    path = event.get("rawPath") or event.get("path")  # API Gateway v2 vs v1
-
+    path = event.get("rawPath") or event.get("path")
     if method == "POST" and path.endswith("/upload"):
         return handle_upload(event)
     elif method == "GET" and path.endswith("/images"):
         return handle_list(event)
     else:
-        return {"statusCode": 404, "body": "Not Found"}
+        return {"statusCode": 404, "body": json.dumps({"error": "Not Found"})}
 
 def handle_upload(event):
     try:

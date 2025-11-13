@@ -43,16 +43,16 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   origin {
-    domain_name = local.api_domain
-    origin_id   = "APIGatewayOrigin"
-
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
+  domain_name = "${aws_apigatewayv2_api.http_api.id}.execute-api.${var.region}.amazonaws.com"
+  origin_id   = "APIGatewayOrigin"
+  origin_path = "/prod" # stage path
+  custom_origin_config {
+    http_port              = 80
+    https_port             = 443
+    origin_protocol_policy = "https-only"
+    origin_ssl_protocols   = ["TLSv1.2"]
   }
+}
 
 
 
@@ -130,11 +130,11 @@ resource "aws_cloudfront_cache_policy" "disabled_api_cache" {
     enable_accept_encoding_brotli = false
 
     cookies_config {
-      cookie_behavior = "none"
+      cookie_behavior = "all"
     }
 
     headers_config {
-      header_behavior = "none"
+      header_behavior = "all"
     }
 
     query_strings_config {
