@@ -66,16 +66,17 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   ordered_cache_behavior {
-    path_pattern     = "/api/*"
-    target_origin_id = "APIGatewayOrigin"
+  path_pattern     = "/api/*"
+  target_origin_id = "APIGatewayOrigin"
 
-    viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
-    cached_methods         = ["GET", "HEAD"]
+  viewer_protocol_policy = "redirect-to-https"
+  allowed_methods        = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+  cached_methods         = ["GET", "HEAD"]
 
-    cache_policy_id = "413f1601-97f7-42f1-8e8b-0f6cd0d42836"
-    origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
-  }
+  cache_policy_id            = aws_cloudfront_cache_policy.disabled_api_cache.id
+  origin_request_policy_id   = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
+}
+
 
   price_class = "PriceClass_100"
 
@@ -114,4 +115,29 @@ resource "aws_cloudfront_distribution" "cdn" {
     error_caching_min_ttl = 0
   }
 
+}
+
+resource "aws_cloudfront_cache_policy" "disabled_api_cache" {
+  name = "disabled-api-cache"
+
+  min_ttl     = 0
+  default_ttl = 0
+  max_ttl     = 0
+
+  parameters_in_cache_key_and_forwarded_to_origin {
+    enable_accept_encoding_gzip   = true
+    enable_accept_encoding_brotli = true
+
+    cookies_config {
+      cookie_behavior = "none"
+    }
+
+    headers_config {
+      header_behavior = "none"
+    }
+
+    query_strings_config {
+      query_string_behavior = "none"
+    }
+  }
 }
