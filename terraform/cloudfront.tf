@@ -130,14 +130,11 @@ resource "aws_cloudfront_cache_policy" "disabled_api_cache" {
     enable_accept_encoding_brotli = false
 
     cookies_config {
-      cookie_behavior = "all"
+      cookie_behavior = "none"
     }
 
     headers_config {
-      header_behavior = "whitelist"
-      headers {
-        items = ["Authorization"] # <— nested block with items
-      }
+      header_behavior = "none"
     }
 
     query_strings_config {
