@@ -8,7 +8,7 @@ resource "aws_cloudwatch_log_group" "lambda_log" {
 resource "aws_lambda_function" "backend" {
   filename         = var.lambda_zip_path
   function_name    = "${var.project}-backend"
-  source_code_hash = filebase64sha256("${path.module}/lambda/backend.zip")
+  source_code_hash = filebase64sha256("${var.lambda_zip_path}")
   role             = aws_iam_role.lambda_role.arn
   handler          = var.lambda_handler
   runtime          = var.lambda_runtime
