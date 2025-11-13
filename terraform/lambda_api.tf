@@ -43,7 +43,7 @@ resource "aws_apigatewayv2_api" "http_api" {
   protocol_type = "HTTP"
 
   cors_configuration {
-    allow_origins = ["gallery.tybierwagen.com"]      # or your frontend domain
+    allow_origins = ["https://gallery.tybierwagen.com"]      # or your frontend domain
     allow_methods = ["*"]
   }
 }
