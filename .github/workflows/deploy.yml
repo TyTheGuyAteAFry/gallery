@@ -48,6 +48,11 @@ jobs:
           cd lambda
           zip -r ../terraform/lambda/backend.zip .
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.13.5  # or your preferred version
+
       - name: Terraform Init
         working-directory: terraform
         run: terraform init -input=false
