@@ -1,5 +1,6 @@
 locals {
-  api_domain = "${aws_apigatewayv2_api.http_api.id}.execute-api.${var.region}.amazonaws.com"
+  api_stage = "prod" # your API stage
+  api_domain = "${aws_apigatewayv2_api.http_api.id}.execute-api.${var.region}.amazonaws.com/${local.api_stage}"
 }
 
 # CloudFront OAI (origin access identity)
@@ -66,7 +67,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   ordered_cache_behavior {
-  path_pattern     = "api/*"
+  path_pattern     = "/api/*"
   target_origin_id = "APIGatewayOrigin"
 
   viewer_protocol_policy = "redirect-to-https"
@@ -137,7 +138,7 @@ resource "aws_cloudfront_cache_policy" "disabled_api_cache" {
     }
 
     query_strings_config {
-      query_string_behavior = "none"
+      query_string_behavior = "all"
     }
   }
 }
