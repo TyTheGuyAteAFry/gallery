@@ -22,7 +22,7 @@ variable "aws_region" {
 variable "lambda_zip_path" {
   description = "Path to the Lambda deployment ZIP file"
   type        = string
-  default     = "../lambda/backend.zip" # adjust to your actual path
+  default     = "terraform/lambda/backend.zip" # adjust to your actual path
 }
 
 variable "lambda_handler" {
