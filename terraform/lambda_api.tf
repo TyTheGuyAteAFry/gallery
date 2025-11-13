@@ -94,3 +94,14 @@ resource "aws_iam_role_policy_attachment" "apigw_logging_attach" {
   role       = aws_iam_role.apigw_logging_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
 }
+
+resource "aws_apigatewayv2_api" "http_api" {
+  name          = "${var.project}-http-api-${random_id.suffix.hex}"
+  protocol_type = "HTTP"
+
+  cors_configuration {
+    allow_origins = ["gallery.tybierwagen.com"]      # or your frontend domain
+    allow_methods = ["*"]
+  }
+}
+
