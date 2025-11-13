@@ -78,7 +78,6 @@ jobs:
         run: npm install
 
       - name: Inject API URL into frontend .env
-        working-directory: frontend
         run: |
           echo "VITE_API_URL=${{ env.API_URL }}" > .env
           echo "Injected API Gateway URL: ${{ env.API_URL }}"
