@@ -38,24 +38,18 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-    cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "s3-${aws_s3_bucket.site_bucket.id}"
-
+    target_origin_id       = "S3Origin"
     viewer_protocol_policy = "redirect-to-https"
-
-    forwarded_values {
-      query_string = false
-      cookies {
-        forward = "none"
-      }
-    }
-
-    min_ttl     = 0
-    default_ttl = 3600
-    max_ttl     = 86400
   }
 
+  ordered_cache_behavior {
+    path_pattern           = "/api/*"
+    target_origin_id       = "APIGatewayOrigin"
+    allowed_methods        = ["GET","POST","PUT","DELETE","OPTIONS"]
+    cached_methods         = ["GET","HEAD"]
+    viewer_protocol_policy = "redirect-to-https"
+  }
+  
   price_class = "PriceClass_100"
 
   restrictions {
