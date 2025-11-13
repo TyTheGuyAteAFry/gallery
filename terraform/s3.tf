@@ -3,7 +3,7 @@ locals {
   logs_bucket_name = "${var.project}-logs-${random_id.suffix.hex}"
 }
 
-# Bucket to store the static site build (frontend)
+# Bucket to store the static site build (frontend
 resource "aws_s3_bucket" "site_bucket" {
   bucket        = local.bucket_name
   force_destroy = false
