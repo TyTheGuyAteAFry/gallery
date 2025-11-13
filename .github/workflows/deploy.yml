@@ -33,7 +33,7 @@ jobs:
       - name: Setup Python (for Lambda packaging)
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
       - name: Install Lambda dependencies
         working-directory: lambda
@@ -59,7 +59,13 @@ jobs:
 
       - name: Terraform Apply (update Lambda)
         working-directory: terraform
-        run: terraform apply -auto-approve -input=false
+        run: terraform apply -auto-approve -input=false \
+          -var="project=gallery-app" \
+          -var="environment=dev" \
+          -var="region=us-east-1" \
+          -var="lambda_zip_path=terraform/lambda/backend.zip" \
+          -var="lambda_runtime=python3.11" \
+          -var="lambda_handler=index.handler"
 
       - name: Get API Gateway URL
         id: get_api_url
