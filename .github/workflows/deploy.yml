@@ -13,6 +13,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      API_URL: ${{ secrets.API_URL }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -69,18 +72,17 @@ jobs:
             -var="lambda_runtime=python3.11" \
             -var="lambda_handler=index.handler"
 
-      - name: Get API Gateway URL
-        run: |
-          echo "VITE_API_URL=${{ env.API_URL }}" > $GITHUB_WORKSPACE/.env
-          echo "Injected API Gateway URL: ${{ env.API_URL }}"
-
       - name: Install dependencies
-        run: npm install
+  run: npm install
 
-      - name: Inject API URL into frontend .env
-        run: |
-          echo "VITE_API_URL=${{ env.API_URL }}" > .env
-          echo "Injected API Gateway URL: ${{ env.API_URL }}"
+- name: Inject API URL
+  run: |
+    echo "VITE_API_URL=${{ env.API_URL }}" > .env
+    echo "Injected API Gateway URL: ${{ env.API_URL }}"
+
+- name: Build
+  run: npm run build
+
 
       - name: Build frontend
         run: npm run build
