@@ -67,16 +67,16 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   ordered_cache_behavior {
-  path_pattern     = "/prod/api/*"
-  target_origin_id = "APIGatewayOrigin"
+    path_pattern     = "/prod/api/*"
+    target_origin_id = "APIGatewayOrigin"
 
-  viewer_protocol_policy = "redirect-to-https"
-  allowed_methods        = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
-  cached_methods         = ["GET", "HEAD"]
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods        = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods         = ["GET", "HEAD"]
 
-  cache_policy_id            = aws_cloudfront_cache_policy.disabled_api_cache.id
-  origin_request_policy_id   = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
-}
+    cache_policy_id            = aws_cloudfront_cache_policy.disabled_api_cache.id
+    origin_request_policy_id   = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
+  }
 
 
   price_class = "PriceClass_100"
