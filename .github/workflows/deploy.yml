@@ -32,9 +32,9 @@ jobs:
 
        # --- Deploy Lambda ---
       - name: Zip Lambda code
-        run: |
-          cd lambda
-          zip -r ../terraform/lambda/backend.zip .
+         run: |
+          mkdir -p terraform/lambda
+          zip -r terraform/lambda/backend.zip lambda/
 
       - name: Terraform Init
         working-directory: terraform
