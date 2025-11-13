@@ -1,3 +1,7 @@
+locals {
+  api_domain = "${aws_apigatewayv2_api.http_api.id}.execute-api.${var.region}.amazonaws.com"
+}
+
 # CloudFront OAI (origin access identity)
 resource "aws_cloudfront_origin_access_identity" "oai" {
   comment = "OAI for ${local.bucket_name}"
@@ -38,7 +42,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   origin {
-    domain_name = aws_apigatewayv2_api.http_api.api_endpoint_without_protocol
+    domain_name = local.api_domain
     origin_id   = "APIGatewayOrigin"
 
     custom_origin_config {
