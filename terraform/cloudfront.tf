@@ -40,16 +40,24 @@ resource "aws_cloudfront_distribution" "cdn" {
   default_cache_behavior {
     target_origin_id       = "S3Origin"
     viewer_protocol_policy = "redirect-to-https"
+
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    cached_methods   = ["GET", "HEAD"]
+
+    compress = true
   }
 
   ordered_cache_behavior {
     path_pattern           = "/api/*"
     target_origin_id       = "APIGatewayOrigin"
-    allowed_methods        = ["GET","POST","PUT","DELETE","OPTIONS"]
-    cached_methods         = ["GET","HEAD"]
     viewer_protocol_policy = "redirect-to-https"
+
+    allowed_methods  = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods   = ["GET", "HEAD"]
+
+    compress = true
   }
-  
+
   price_class = "PriceClass_100"
 
   restrictions {
