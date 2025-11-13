@@ -70,12 +70,9 @@ jobs:
             -var="lambda_handler=index.handler"
 
       - name: Get API Gateway URL
-        id: get_api_url
-        working-directory: terraform
         run: |
-          API_URL=$(terraform output -raw api_endpoint)
-          echo "API_URL=$API_URL" >> $GITHUB_ENV
-          echo "Using API Gateway URL: $API_URL"
+          echo "VITE_API_URL=${{ env.API_URL }}" > $GITHUB_WORKSPACE/.env
+          echo "Injected API Gateway URL: ${{ env.API_URL }}"
 
       - name: Install dependencies
         run: npm install
@@ -88,6 +85,7 @@ jobs:
 
       - name: Build frontend
         run: npm run build
+        working-directory: $GITHUB_WORKSPACE
 
       # 🪣 Upload build output to S3
       - name: Upload to S3
