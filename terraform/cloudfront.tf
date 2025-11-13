@@ -56,13 +56,6 @@ resource "aws_cloudfront_distribution" "cdn" {
     max_ttl     = 86400
   }
 
-  # Logging to S3 logs bucket
-  logging_config {
-    include_cookies = false
-    bucket          = aws_s3_bucket.logs_bucket.bucket_domain_name
-    prefix          = "cloudfront/"
-  }
-
   price_class = "PriceClass_100"
 
   restrictions {
