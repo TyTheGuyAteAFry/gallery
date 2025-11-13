@@ -22,12 +22,6 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build frontend
-        run: npm run build
-
       # 🧰 Configure AWS credentials (OIDC or keys)
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -35,6 +29,40 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+
+       # --- Deploy Lambda ---
+      - name: Zip Lambda code
+        run: |
+          cd lambda
+          zip -r ../terraform/lambda/backend.zip .
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init -input=false
+
+      - name: Terraform Apply (update Lambda)
+        working-directory: terraform
+        run: terraform apply -auto-approve -input=false
+
+      - name: Get API Gateway URL
+        id: get_api_url
+        working-directory: terraform
+        run: |
+          API_URL=$(terraform output -raw api_endpoint)
+          echo "API_URL=$API_URL" >> $GITHUB_ENV
+          echo "Using API Gateway URL: $API_URL"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Inject API URL into frontend .env
+        working-directory: frontend
+        run: |
+          echo "VITE_API_URL=${{ env.API_URL }}" > .env
+          echo "Injected API Gateway URL: ${{ env.API_URL }}"
+
+      - name: Build frontend
+        run: npm run build
 
       # 🪣 Upload build output to S3
       - name: Upload to S3
