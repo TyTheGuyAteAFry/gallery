@@ -45,8 +45,9 @@ jobs:
       - name: Package Lambda function
         run: |
           mkdir -p terraform/lambda
-          cd lambda
-          zip -r ../lambda/backend.zip .
+          cp -r lambda/* terraform/lambda/
+          cd terraform/lambda
+          zip -r backend.zip .
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -64,7 +65,7 @@ jobs:
             -var="project=gallery-app" \
             -var="environment=dev" \
             -var="region=us-east-1" \
-            -var="lambda_zip_path=lambda/backend.zip" \
+            -var="lambda_zip_path=${{ github.workspace }}/terraform/lambda/backend.zip" \
             -var="lambda_runtime=python3.11" \
             -var="lambda_handler=index.handler"
 
