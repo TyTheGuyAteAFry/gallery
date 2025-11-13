@@ -66,7 +66,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   ordered_cache_behavior {
-  path_pattern     = "/api/*"
+  path_pattern     = "api/*"
   target_origin_id = "APIGatewayOrigin"
 
   viewer_protocol_policy = "redirect-to-https"
