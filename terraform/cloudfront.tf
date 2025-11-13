@@ -30,10 +30,19 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   origin {
     domain_name = aws_s3_bucket.site_bucket.bucket_regional_domain_name
-    origin_id   = "s3-${aws_s3_bucket.site_bucket.id}"
+    origin_id   = "S3Origin"
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
+    }
+  }
+
+  origin {
+    domain_name = aws_apigatewayv2_api.http_api.api_endpoint
+    origin_id   = "APIGatewayOrigin"
+
+    custom_origin_config {
+      origin_protocol_policy = "https-only"
     }
   }
 
@@ -43,8 +52,6 @@ resource "aws_cloudfront_distribution" "cdn" {
 
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
-
-    compress = true
   }
 
   ordered_cache_behavior {
@@ -54,8 +61,6 @@ resource "aws_cloudfront_distribution" "cdn" {
 
     allowed_methods  = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods   = ["GET", "HEAD"]
-
-    compress = true
   }
 
   price_class = "PriceClass_100"
