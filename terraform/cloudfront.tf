@@ -2,11 +2,6 @@ locals {
   api_domain = "${aws_apigatewayv2_api.http_api.id}.execute-api.${var.region}.amazonaws.com"
 }
 
-data "aws_cloudfront_origin_request_policy" "all_viewer" {
-  name = "AllViewer"
-}
-
-
 # CloudFront OAI (origin access identity)
 resource "aws_cloudfront_origin_access_identity" "oai" {
   comment = "OAI for ${local.bucket_name}"
