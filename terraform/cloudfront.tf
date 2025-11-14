@@ -2,12 +2,34 @@ locals {
   api_domain = "${aws_apigatewayv2_api.http_api.id}.execute-api.${var.region}.amazonaws.com"
 }
 
+# CloudFront function to rewrite /api/* paths to /* for API Gateway
+resource "aws_cloudfront_function" "api_path_rewrite" {
+  name    = "${var.project}-api-path-rewrite"
+  runtime = "cloudfront-js-1.0"
+  code    = <<-EOT
+function handler(event) {
+    var request = event.request;
+    var uri = request.uri;
+    
+    // Rewrite /api/* to /* for API Gateway (strip /api prefix)
+    if (uri.startsWith('/api/')) {
+        request.uri = uri.substring(4); // Remove '/api' prefix (4 characters)
+    } else if (uri === '/api') {
+        request.uri = '/';
+    }
+    
+    return request;
+}
+EOT
+  publish = true
+}
+
 # CloudFront OAI (origin access identity)
 resource "aws_cloudfront_origin_access_identity" "oai" {
   comment = "OAI for ${local.bucket_name}"
 }
 
-# Allow CloudFront OAI to access S3 bucke
+# Allow CloudFront OAI to access S3 bucket
 resource "aws_s3_bucket_policy" "site_bucket_policy" {
   bucket = aws_s3_bucket.site_bucket.id
   policy = data.aws_iam_policy_document.site_bucket_policy.json
@@ -65,7 +87,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   ordered_cache_behavior {
-    path_pattern = "/api/*"
+    path_pattern     = "/api/*"
     target_origin_id = "APIGatewayOrigin"
 
     viewer_protocol_policy = "redirect-to-https"
@@ -74,6 +96,11 @@ resource "aws_cloudfront_distribution" "cdn" {
 
     cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # CachingDisabled
     origin_request_policy_id = "216adef6-5c7f-47e4-b989-5492eafa07d3" # AllViewerExceptHostHeader
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.api_path_rewrite.arn
+    }
   }
 
 
@@ -100,6 +127,8 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   default_root_object = "index.html"
 
+  # Custom error responses for S3 origin (SPA routing)
+  # Note: These apply globally but API routes should be handled by ordered_cache_behavior first
   custom_error_response {
     error_code            = 403
     response_code         = 200
