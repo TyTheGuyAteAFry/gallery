@@ -7,7 +7,7 @@ resource "aws_cloudfront_origin_access_identity" "oai" {
   comment = "OAI for ${local.bucket_name}"
 }
 
-# Allow CloudFront OAI to access S3 bucket
+# Allow CloudFront OAI to access S3 bucke
 resource "aws_s3_bucket_policy" "site_bucket_policy" {
   bucket = aws_s3_bucket.site_bucket.id
   policy = data.aws_iam_policy_document.site_bucket_policy.json
