@@ -1,7 +1,11 @@
 locals {
-  api_stage = "prod" # your API stage
   api_domain = "${aws_apigatewayv2_api.http_api.id}.execute-api.${var.region}.amazonaws.com/${local.api_stage}"
 }
+
+data "aws_cloudfront_origin_request_policy" "all_viewer" {
+  name = "AllViewer"
+}
+
 
 # CloudFront OAI (origin access identity)
 resource "aws_cloudfront_origin_access_identity" "oai" {
@@ -43,9 +47,9 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   origin {
-  domain_name = "${aws_apigatewayv2_api.http_api.id}.execute-api.${var.region}.amazonaws.com/prod"
+  domain_name = "${aws_apigatewayv2_api.http_api.id}.execute-api.${var.region}.amazonaws.com"
   origin_id   = "APIGatewayOrigin"
-  origin_path = "/prod" # stage path
+  path_pattern = "/api/*"
   custom_origin_config {
     http_port              = 80
     https_port             = 443
@@ -67,15 +71,15 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   ordered_cache_behavior {
-    path_pattern     = "/prod/api/*"
+    path_pattern = "/api/*"
     target_origin_id = "APIGatewayOrigin"
 
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods         = ["GET", "HEAD"]
 
-    cache_policy_id            = aws_cloudfront_origin_request_policy.all_viewer
-    origin_request_policy_id   = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
+    cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # CachingDisabled
+    origin_request_policy_id = "216adef6-5c7f-47e4-b989-5492eafa07d3" # AllViewerExceptHostHeader
   }
 
 
