@@ -11,11 +11,18 @@ function handler(event) {
     var request = event.request;
     var uri = request.uri;
     
+    // Debug: Log the original URI
+    console.log('Original URI: ' + uri);
+    
     // Rewrite /api/* to /* for API Gateway (strip /api prefix)
+    // Query string is automatically preserved in the request object
     if (uri.startsWith('/api/')) {
-        request.uri = uri.substring(4); // Remove '/api' prefix (4 characters)
+        var newUri = uri.substring(4); // Remove '/api' prefix (4 characters)
+        request.uri = newUri;
+        console.log('Rewritten URI: ' + newUri);
     } else if (uri === '/api') {
         request.uri = '/';
+        console.log('Rewritten URI: /');
     }
     
     return request;
@@ -23,6 +30,7 @@ function handler(event) {
 EOT
   publish = true
 }
+
 
 # CloudFront OAI (origin access identity)
 resource "aws_cloudfront_origin_access_identity" "oai" {
@@ -120,6 +128,13 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   aliases = [local.full_domain]
 
+  # Enable CloudFront logging for debugging
+  logging_config {
+    bucket          = aws_s3_bucket.logs_bucket.bucket_domain_name
+    include_cookies = false
+    prefix          = "cloudfront-access/"
+  }
+
   tags = {
     Project     = var.project
     Environment = var.environment
@@ -128,7 +143,10 @@ resource "aws_cloudfront_distribution" "cdn" {
   default_root_object = "index.html"
 
   # Custom error responses for S3 origin (SPA routing)
-  # Note: These apply globally but API routes should be handled by ordered_cache_behavior first
+  # IMPORTANT: These apply globally, but we need to ensure API responses pass through
+  # The issue is that CloudFront custom error responses apply to ALL origins
+  # We'll handle this by ensuring API Gateway doesn't return these error codes
+  # OR by using a CloudFront function to bypass custom error responses for /api/* paths
   custom_error_response {
     error_code            = 403
     response_code         = 200
