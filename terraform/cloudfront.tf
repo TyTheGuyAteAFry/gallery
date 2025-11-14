@@ -43,7 +43,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   origin {
-  domain_name = "${aws_apigatewayv2_api.http_api.id}.execute-api.${var.region}.amazonaws.com"
+  domain_name = "${aws_apigatewayv2_api.http_api.id}.execute-api.${var.region}.amazonaws.com/prod"
   origin_id   = "APIGatewayOrigin"
   origin_path = "/prod" # stage path
   custom_origin_config {
@@ -74,7 +74,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     allowed_methods        = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods         = ["GET", "HEAD"]
 
-    cache_policy_id            = aws_cloudfront_cache_policy.disabled_api_cache.id
+    cache_policy_id            = aws_cloudfront_origin_request_policy.all_viewer
     origin_request_policy_id   = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
   }
 
@@ -116,29 +116,4 @@ resource "aws_cloudfront_distribution" "cdn" {
     error_caching_min_ttl = 0
   }
 
-}
-
-resource "aws_cloudfront_cache_policy" "disabled_api_cache" {
-  name = "disabled-api-cache"
-
-  min_ttl     = 0
-  default_ttl = 0
-  max_ttl     = 1
-
-  parameters_in_cache_key_and_forwarded_to_origin {
-    enable_accept_encoding_gzip   = false
-    enable_accept_encoding_brotli = false
-
-    cookies_config {
-      cookie_behavior = "none"
-    }
-
-    headers_config {
-      header_behavior = "none"
-    }
-
-    query_strings_config {
-      query_string_behavior = "all"
-    }
-  }
 }
