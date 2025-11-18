@@ -1,3 +1,18 @@
+resource "aws_cloudfront_function" "api_path_rewrite" {
+  name    = "${var.project}-api-path-rewrite"
+  runtime = "cloudfront-js-1.0"
+  code    = <<-EOT
+function handler(event) {
+    var request = event.request;
+    var uri = request.uri;
+
+    // This function is retained to satisfy CloudFront references during cleanup.
+    return request;
+}
+EOT
+  publish = true
+}
+
 resource "aws_cloudfront_function" "spa_router" {
   name    = "${var.project}-spa-router"
   runtime = "cloudfront-js-1.0"
