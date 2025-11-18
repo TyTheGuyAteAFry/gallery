@@ -60,7 +60,7 @@ resource "aws_apigatewayv2_integration" "lambda_integration" {
 # Route to forward all requests to Lambda (you can change to specific route)
 resource "aws_apigatewayv2_route" "default_route" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "ANY /{proxy+}"
+  route_key = "$default"
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 

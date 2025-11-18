@@ -107,7 +107,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
 
-
+#whitespace
   default_cache_behavior {
     target_origin_id       = "S3Origin"
     viewer_protocol_policy = "redirect-to-https"
