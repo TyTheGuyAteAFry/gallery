@@ -12,7 +12,7 @@ export default function Gallery() {
 
   async function fetchImages(folder) {
     try {
-      const res = await fetch(`${API_URL}/images?folder=${folder}`);
+      const res = await fetch(`${API_URL}/images?folder=${encodeURIComponent(folder)}`);
       if (!res.ok) throw new Error("Failed to fetch images");
       const data = await res.json();
       setImages(data.map((item) => item.url));
@@ -31,9 +31,16 @@ export default function Gallery() {
         (file) =>
           new Promise((resolve, reject) => {
             const reader = new FileReader();
-            reader.onload = () => resolve({ filename: file.name, content: btoa(reader.result) });
+            reader.onload = () =>
+              resolve({
+                filename: file.name,
+                content: btoa(
+                  new Uint8Array(reader.result)
+                    .reduce((data, byte) => data + String.fromCharCode(byte), "")
+                ),
+              });
             reader.onerror = reject;
-            reader.readAsBinaryString(file); // read as binary for base64
+            reader.readAsArrayBuffer(file); // ensures clean binary for base64
           })
       )
     );
