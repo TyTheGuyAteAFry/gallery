@@ -4,7 +4,7 @@ export default function Gallery() {
   const [folders, setFolders] = useState(["Vacation", "Family", "Pets"]);
   const [selectedFolder, setSelectedFolder] = useState(folders[0]);
   const [images, setImages] = useState([]);
-  const API_URL = import.meta.env.VITE_API_URL; // from .env
+  const API_URL = import.meta.env.VITE_API_URL || "https://f468xcr3y9.execute-api.us-east-1.amazonaws.com";
 
   useEffect(() => {
     fetchImages(selectedFolder);
