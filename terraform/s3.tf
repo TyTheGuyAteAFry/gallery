@@ -36,6 +36,14 @@ resource "aws_s3_bucket" "logs_bucket" {
 
 }
 
+resource "aws_s3_bucket_ownership_controls" "logs_bucket_ownership" {
+  bucket = aws_s3_bucket.logs_bucket.id
+
+  rule {
+    object_ownership = "ObjectWriter"
+  }
+}
+
 # Block public access on both buckets
 resource "aws_s3_bucket_public_access_block" "site_block" {
   bucket                  = aws_s3_bucket.site_bucket.id
