@@ -98,6 +98,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   origin {
     domain_name = "${aws_apigatewayv2_api.http_api.id}.execute-api.${var.region}.amazonaws.com"
     origin_id   = "APIGatewayOrigin"
+    origin_path = "/$default"
     custom_origin_config {
       http_port              = 80
       https_port             = 443
